@@ -1,0 +1,29 @@
+header{
+    background-color: #303030;
+    color: white;
+    justify-content: space-between ;
+    height: 12vh;
+
+}
+
+.title{
+    text-align: center;
+    align-items: center;
+}
+
+ul{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+
+li{
+    justify-content: space-around;
+    list-style: none;
+}
+
+a{
+   text-decoration: none;
+    color: white;
+}
