@@ -1,8 +1,10 @@
 
-
 import { useEffect, useState } from "react";
 import { HeaderContent, NavigationItem } from './header.interface';
 import '../../styles/Header.css'
+
+import LogoPhoto from '../../Media/shopLogo.jpeg';
+
 const Header = () => {
     const [headerData, setHeaderData] = useState<HeaderContent | null>(null);
 
@@ -15,7 +17,6 @@ const Header = () => {
                 }
                 const data = await response.json();
                 setHeaderData(data);
-                console.log('Fetched Header content:', data);
             } catch (error) {
                 console.error('Error fetching header content:', error);
             }
@@ -23,13 +24,17 @@ const Header = () => {
         fetchHeaderContent();
     }, []);
 
-    console.log(headerData);
 
     if (!headerData) return null;
 
     return (
         <header>
-            <div className="title">{headerData.title}</div>
+            <div className="logoDiv">
+                <img className="logo" src={LogoPhoto} alt="Logo"/>
+                <p className="headerTitle">
+                    {headerData.title}
+                </p>
+            </div>
             <ul>
                 {headerData.navigation.map((navigator: NavigationItem) => (
                     <li key={navigator.label}>
@@ -39,6 +44,11 @@ const Header = () => {
                     </li>
                 ))}
             </ul>
+
+            <div className="loginPlace">
+                coś tutej będzie
+            </div>
+
         </header>
     );
 }
