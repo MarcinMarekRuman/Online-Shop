@@ -1,8 +1,5 @@
-
-import React from 'react';
 import '../../styles/Home.css';
-import BackgroundPhoto from '../../Media/backgroundIMG.jpg';
-import BackgroundPhoto2 from '../../Media/backgroundIMG2.jpg';
+
 
 
 const HomePage = () => {
@@ -11,15 +8,37 @@ const HomePage = () => {
 
 
             <div className='homeBackgroundPhoto1'>
-                <img src={BackgroundPhoto} alt='BackgroundPhoto'/>
-            </div>
+                <div className='invite_div'>
+                    <h1>Check Ours Products</h1>
+                </div>
 
-            <div className='invite_div'>
-                <h1>Hello in my Online Shop !</h1>
-            </div>
+                <div className='homeBackgroundPhoto2'>
+                    <p>
+                        Witamy w naszym sklepie, gdzie sportowy styl spotyka się z najwyższą jakością! Specjalizujemy
+                        się w
+                        sprzedaży oryginalnych butów renomowanych marek, takich jak Nike i Adidas.<br/><br/>
+                        Nasza oferta obejmuje zarówno klasyczne modele, jak i najnowsze kolekcje, które zdobywają serca
+                        miłośników mody i sportu na całym świecie.
 
-            <div className='homeBackgroundPhoto2'>
-                <img src={BackgroundPhoto2} alt='BackgroundPhoto'/>
+                        Naszym celem jest zapewnienie każdemu klientowi komfortu, stylu i wyjątkowej jakości, jakiej
+                        oczekują od najlepszych marek w branży. Oferujemy szeroki wybór obuwia sportowego, casualowego
+                        oraz
+                        lifestyle’owego, które doskonale sprawdzi się zarówno podczas codziennych aktywności, jak i
+                        treningów.
+
+                        Niezależnie od tego, czy szukasz kultowych modeli, jak Nike Air Max, Adidas Yeezy, czy też
+                        preferujesz najnowsze trendy w modzie sportowej, u nas znajdziesz coś dla siebie. Każda para
+                        butów w
+                        naszej kolekcji to połączenie nowoczesnych technologii i niepowtarzalnego designu.
+
+                        Z pasją dbamy o to, by każdy miłośnik sportowego stylu mógł wyrazić siebie i czuć się komfortowo
+                        na
+                        każdym kroku. Zapraszamy do zapoznania się z naszą ofertą i odkrycia, dlaczego tysiące klientów
+                        wybierają właśnie nasz sklep
+                    </p>
+                </div>
+
+
             </div>
 
 

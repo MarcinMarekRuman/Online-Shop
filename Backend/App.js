@@ -1,8 +1,21 @@
 const express = require('express')
-const app = express()
+const path = require('path');
+const cors = require('cors');
+const app = express();
 
-app.get('/', function (req, res) {
-    res.send('Hello World')
-})
 
-app.listen(3000)
+app.use(express.json());
+app.use(cors());
+
+
+app.get('/api/message', (req, res) =>{
+    res.json({message: 'Hello from Express!'});
+});
+
+
+
+
+
+
+
+app.listen(3000);
