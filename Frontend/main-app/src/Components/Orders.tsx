@@ -1,11 +1,13 @@
-
+import '../styles/Orders.css'
 const SignIn = () =>{
     return(
+        <div className='Orders-Container'>
+            <div className='Orders-List'>
+                <span className=''></span>
 
-        <>
-            <span> Strona z zamównieniami</span>
-        </>
+            </div>
 
+        </div>
     )
 }
 

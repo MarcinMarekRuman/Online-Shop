@@ -8,6 +8,7 @@ import SignIn from './Components/SignIn.tsx'
 import Admin from './Components/Admin.tsx'
 import Footer from './Components/Footer/Footer.tsx'
 import Cart from './Components/Cart.tsx'
+import ProductsAdd from './Components/ProductsAdd.tsx'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/Join" element={<Register/>} />
                 <Route path="/Login" element={<SignIn/>} />
                 <Route path="/Cart" element={<Cart/>} />
+                <Route path="/ProductsAdd" element={<ProductsAdd/>} />
 
             </Routes>
 
