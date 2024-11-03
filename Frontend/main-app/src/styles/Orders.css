@@ -1,0 +1,14 @@
+.Orders-Container{
+    display: flex;
+    height: 77vh;
+    width: auto;
+    background-color: #9a9a9a;
+    justify-content: center;
+    align-items: center;
+}
+
+.Orders-List{
+    background-color: white;
+    width: 80vw;
+    height: 60vh;
+}

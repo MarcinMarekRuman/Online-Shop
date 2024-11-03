@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { HeaderContent, NavigationItem } from './header.interface';
 import '../../styles/Header.css'
 
-import LogoPhoto from '../../Media/shopLogo.jpeg';
+import LogoPhoto from '../../Media1/shopLogo.jpeg';
 
 const Header = () => {
     const [headerData, setHeaderData] = useState<HeaderContent | null>(null);
@@ -45,8 +45,8 @@ const Header = () => {
                 ))}
             </ul>
 
-            <div className="loginPlace">
-                coś tutej będzie
+            <div className="AdminPanel">
+                <a href='/Admin'>  Admin Panel </a>
             </div>
 
         </header>
