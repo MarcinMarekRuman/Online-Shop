@@ -1,7 +1,8 @@
 
 import {useEffect, useState} from "react";
 import '../styles/Products.css';
-
+import { FiEdit } from "react-icons/fi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 
 
@@ -12,7 +13,7 @@ import '../styles/Products.css';
         useEffect(() => {
             const fetchProducts = async () => {
                 try {
-                    const response = await fetch('http://localhost:3000/api/products');
+                    const response = await fetch('http://localhost:3000/products');
                     console.log(response);
                     if (!response.ok) {
                         throw new Error('Error');
@@ -36,16 +37,19 @@ import '../styles/Products.css';
                     <div className="products-box">
                         {products.map((product) => (
                             <div key={product.id} className="product-card">
-                                <img src={product.imageUrl} alt={product.name} className="product-image"/>
+                                <img src={product.imageURL} alt={product.name} className="product-image"/>
                                 <h2>{product.name}</h2>
                                 <p>{product.description}</p>
                                 <h3>Price: ${product.price}</h3>
+                                <div className='product-buttons'>
+                                    <a href='/ProductsAdd' className='product-button'> <FiEdit /></a>
+                                    <a href='/PrductsAdd' className='product-button'><RiDeleteBin6Line /> </a>
+                                </div>
                             </div>
                         ))}
 
 
-
-                </div>
+                    </div>
 
             </div>
 
