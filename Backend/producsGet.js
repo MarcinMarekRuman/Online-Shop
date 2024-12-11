@@ -6,7 +6,6 @@ async function getProducts (req, res)  {
             const db = await connectDB();
             let products = await db.collection('products').find({}).toArray();
             res.status(200).json(products);
-            console.log(products);
 
         } catch (err) {
             console.error('Błąd:', err);
