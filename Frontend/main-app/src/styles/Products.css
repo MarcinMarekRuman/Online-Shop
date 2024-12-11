@@ -46,12 +46,18 @@
     height: 8vw;
 }
 
-.product-buttons{
+.addToCartPopup{
     display: flex;
+    position: absolute;
+    top: 25vh;
+    height: 50vh;
+    width: 50vw;
+    background-color: white;
+    border: 3px solid black;
+    border-radius: 30px;
+    flex-direction: column;
+    align-items: center;
     justify-content: space-evenly;
 }
-.product-button{
-    height: auto;
-    width: 20%;
-    border: 1px solid black;
-}
+
+
