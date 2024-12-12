@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { HeaderContent, NavigationItem } from './header.interface';
 import '../../styles/Header.css'
 
+// @ts-ignore
 import LogoPhoto from '../../Media1/shopLogo.jpeg';
 
 const Header = () => {
@@ -27,6 +28,31 @@ const Header = () => {
 
     if (!headerData) return null;
 
+
+    const logout = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch('http://localhost:3000/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+
+            if (response.ok) {
+                console.log('Logout successfully');
+                window.location.href = '/';
+            } else {
+                console.log('Logout error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+
+    };
+
     return (
         <header>
             <div className="logoDiv">
@@ -48,6 +74,7 @@ const Header = () => {
             <div className="AdminPanel">
                 <a href='/Admin'>  Admin Panel </a>
             </div>
+            <button className='logout' onClick={logout}>Logout</button>
 
         </header>
     );

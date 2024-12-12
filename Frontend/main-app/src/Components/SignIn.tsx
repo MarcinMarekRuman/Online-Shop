@@ -16,17 +16,21 @@ import {useState} from 'react';
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        credentials: 'include',
                         body: JSON.stringify({ email, password }),
                     });
 
                     if (!response.ok) {
-                        // console.log(response);
+
                         throw new Error('Login failed');
+                    }else{
+                        const data = await response.json();
+                        localStorage.setItem('token', data.token);
+                        window.location.replace('/');
+                        alert('Logged in successfully!');
+
                     }
 
-                    const data = await response.json();
-                    localStorage.setItem('token', data.token);
-                    alert('Logged in successfully!');
                 } catch (err) {
                     // console.log(err);
                     alert('Invalid credentials');

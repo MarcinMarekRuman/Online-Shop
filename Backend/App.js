@@ -11,24 +11,31 @@ const MongoSession = require('connect-mongodb-session')(session);
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { ObjectId } = require('mongodb');
+const cookieParser =  require('cookie-parser');
 
 const app = express();
-const store = new MongoSession({
-    uri: 'mongodb://127.0.0.1:27017',
-    collection: 'sessions'
-});
+const store = new MongoSession({uri: 'mongodb://127.0.0.1:27017', collection: 'sessions'});
 
 
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3001',
+    credentials: true  }));
+
+app.use(cookieParser());
 app.use(
     session({
         secret: 'my secret',
         resave: false,
         saveUninitialized: false,
         store: store,
-        cookie: {maxAge: 1000 * 60 * 60 * 24}
+        cookie: {
+            httpOnly: true,
+            secure: false,
+            maxAge: 3600000,
+            sameSite: 'strict'
+        }
     }));
 app.use('/Media1', express.static(path.join(__dirname, 'Media1')));
 
@@ -36,6 +43,10 @@ app.use('/Media1', express.static(path.join(__dirname, 'Media1')));
 
 
 app.post('/login', async (req, res) => {
+
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3001');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+
     const { email, password } = req.body;
     const db = await connectDB();
     try {
@@ -62,6 +73,14 @@ app.post('/login', async (req, res) => {
             );
             req.session.user = user;
 
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: false,
+                maxAge: 3600000,
+                sameSite: 'strict',
+                loggedIn: true
+            });
+
             return res.json({ token, userId: user._id });
         } catch (bcryptError) {
             return res.status(500).json({ message: 'Password comparison failed' });
@@ -71,6 +90,19 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ message: 'Logout failed' });
+        }
+        res.clearCookie('token');
+        res.redirect('/');
+        return res.json({ message: 'Logged out successfully' });
+    });
+});
+
+
+
 
 
 app.get('/cart', auth, (req, res) => {
@@ -78,34 +110,40 @@ app.get('/cart', auth, (req, res) => {
     res.json({ message: 'Here is your cart!', userId: req.session.user._id });
 });
 
-app.post('/cart/add', auth, async (req, res) => {
-    const { productId, quantity } = req.body;
-    const db = await connectDB();
-    try {
-        const user = await db.collection('users').findOne({ _id: new ObjectId(req.userId) });
-        const product = await db.collection('products').findOne({ _id: new ObjectId(productId) });
+app.post('/cart/add', async (req, res, next) => {
+        const { productID, quantity } = req.body;
+        console.log(productID);
+        console.log(quantity);
+        const db = await connectDB();
+        try {
+            const user = await db.collection('users').findOne({ _id: new ObjectId(req.userId) });
+            const product = await db.collection('products').findOne({ _id: new ObjectId(productID) });
 
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+            console.log(product);
+            console.log(user);
+
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+            }
+
+            const cartItemIndex = user.cart.items.findIndex(item => item.productId.toString() === productID);
+
+            if (cartItemIndex >= 0) {
+                user.cart.items[cartItemIndex].quantity += quantity;
+            } else {
+                user.cart.items.push({ productId: new ObjectId(productID), quantity });
+            }
+
+            await db.collection('users').updateOne(
+                { _id: new ObjectId(req.userId) },
+                { $set: { cart: user.cart } }
+            );
+
+            res.json({ message: 'Product added to cart', cart: user.cart });
+        } catch (err) {
+            res.status(500).json({ message: 'Server error' });
         }
 
-        const cartItemIndex = user.cart.items.findIndex(item => item.productId.toString() === productId);
-
-        if (cartItemIndex >= 0) {
-            user.cart.items[cartItemIndex].quantity += quantity;
-        } else {
-            user.cart.items.push({ productId: new ObjectId(productId), quantity });
-        }
-
-        await db.collection('users').updateOne(
-            { _id: new ObjectId(req.userId) },
-            { $set: { cart: user.cart } }
-        );
-
-        res.json({ message: 'Product added to cart', cart: user.cart });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
-    }
 });
 
 

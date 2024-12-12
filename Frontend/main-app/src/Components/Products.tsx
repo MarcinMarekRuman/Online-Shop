@@ -9,6 +9,8 @@ import '../styles/Products.css';
         const [products, setProducts] = useState([]);
         const [popupProduct, setPopupProduct] = useState(null);
         const [hidden, setHidden] = useState(false);
+        const [quantity, setQuantity] = useState('');
+        const [productID, setProductID] = useState(null);
 
 
 
@@ -19,7 +21,7 @@ import '../styles/Products.css';
                     const response = await fetch('http://localhost:3000/products');
                     console.log(response);
                     if (!response.ok) {
-                        throw new Error('Error');
+                        console.log('No response');
                     }
                     const data = await response.json();
                     setProducts(data);
@@ -62,6 +64,7 @@ import '../styles/Products.css';
             const productData = await showCart(ID);
 
             if (productData) {
+                setProductID(productData._id);
                 setHidden(true);
             } else {
                 return;
@@ -71,9 +74,39 @@ import '../styles/Products.css';
 
 
 
+        const addToCart = async (e) => {
+            e.preventDefault();
+
+            console.log("productID:", productID);
+            console.log("quantity:", quantity);
+
+            try {
+                    const response = await fetch('http://localhost:3000/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({productID, quantity}),
+                    });
+
+                    if (response.ok) {
+                        console.log('Produkt został wysłany!');
+                        setHidden(true);
+                    } else {
+                        console.log('Błąd podczas wysyłania produktu');
+                    }
+                } catch (error) {
+                    console.error('Wystąpił błąd:', error);
+                }
+
+        };
+
+
+
+
         return (
             <div className="products-container">
-                <h3 className='products-text'>Zapoznaj się z naszą ofertą</h3>
+                <h3 className='products-text'>Ours Offer</h3>
 
                 <div className="products-box">
                     {products.map((product) => (
@@ -90,26 +123,28 @@ import '../styles/Products.css';
 
                 </div>
                 {hidden && (<div className="addToCartPopup">
+
+                    <form>
                         <div className="productTile">
                             <img src={popupProduct.imageURL} alt={popupProduct.name}/>
                             <h2>{popupProduct.name}</h2>
                             <h2>Price: ${popupProduct.price}</h2>
-
-
                         </div>
+                        <input type='hidden' value={productID}/>
+                        <label>Quantity</label>
+                        <input type='number' value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
                         <div className="addButtons">
-                            <button className="addCartButton"
-                            > Confirm
+                            <button className="addCartButton" onClick={addToCart}>
+                             Confirm
                             </button>
                             <button onClick={hiddenPopup}
                                     className="addCartButton"> Cancel
                             </button>
-
                         </div>
-
+                    </form>
 
                     </div>
-                )}
+                    )}
             </div>
 
         )
