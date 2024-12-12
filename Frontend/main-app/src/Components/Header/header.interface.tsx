@@ -4,5 +4,6 @@ export interface NavigationItem{
 }
 
 export interface HeaderContent{
+    title: any;
     navigation: NavigationItem[]
 }

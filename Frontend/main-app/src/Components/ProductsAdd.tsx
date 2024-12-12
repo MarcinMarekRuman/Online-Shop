@@ -33,11 +33,13 @@ const ProductsAdd = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify(productData),
             });
 
             if (response.ok) {
-                console.log('Produkt został wysłany!');
+                console.log('Produkt został wysłany!')
+                window.location.reload();
             } else {
                 console.log('Błąd podczas wysyłania produktu');
             }
@@ -61,7 +63,9 @@ const ProductsAdd = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://localhost:3000/products');
+                const response = await fetch('http://localhost:3000/products',{
+                    credentials: 'include',
+                });
                 console.log(response);
                 if (!response.ok) {
                     throw new Error('Error');
@@ -87,6 +91,7 @@ const ProductsAdd = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 });
 
                 if (response.ok) {
@@ -147,7 +152,7 @@ const ProductsAdd = () => {
                     <div className="Change-Div">
                         <label className="edit-label">Dodaj plik ze zdjęciem</label>
                         <input
-                            type="url"
+                            type="string"
                             value={imageURL}
                             onChange={(e) => setImageURL(e.target.value)}
                             required
