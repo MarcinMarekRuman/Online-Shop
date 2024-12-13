@@ -8,6 +8,10 @@ import LogoPhoto from '../../Media1/shopLogo.jpeg';
 
 const Header = () => {
     const [headerData, setHeaderData] = useState<HeaderContent | null>(null);
+    const [userData, setUserData] = useState(null);
+    const [role, setRole] = useState(false);
+    const [adminRole, setAdminRole] = useState(false);
+
 
     useEffect(() => {
         const fetchHeaderContent = async () => {
@@ -25,8 +29,47 @@ const Header = () => {
         fetchHeaderContent();
     }, []);
 
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/userCheck', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
+
+                if (!response.ok) {
+                    console.log('No response');
+                }
+
+                const data = await response.json();
+                setUserData(data);
+
+
+                if (data.userData) {
+                    setRole(true);
+                    if (data.userData.role === 'admin') {
+                        setAdminRole(true);
+                    }
+                } else {
+                    setRole(false);
+                    setAdminRole(false);
+                }
+
+            } catch (error) {
+                console.error('Error fetching header content:', error);
+            }
+        };
+        fetchUserData();
+    }, []);
+
+
+
 
     if (!headerData) return null;
+
 
 
     const logout = async (e) => {
@@ -53,6 +96,7 @@ const Header = () => {
 
     };
 
+    if(!userData || userData)
     return (
         <header>
             <div className="logoDiv">
@@ -71,10 +115,10 @@ const Header = () => {
                 ))}
             </ul>
 
-            <div className="AdminPanel">
-                <a href='/Admin'>  Admin Panel </a>
-            </div>
-            <button className='logout' onClick={logout}>Logout</button>
+            {adminRole && (<div className="AdminPanel">
+                <a href='/Admin'> Admin Panel </a>
+            </div>)}
+            { role &&(<button className='logout' onClick={logout}>Logout</button>)}
 
         </header>
     );

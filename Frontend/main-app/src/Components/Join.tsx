@@ -29,9 +29,10 @@ const SignIn = () =>{
             });
 
             if (response.ok) {
-                console.log('User has been registered!');
+                alert('You has been registered!');
+                window.location.replace('/login');
             } else {
-                console.log('Error while registering!');
+                alert('User already registered!');
             }
         } catch (error) {
             console.error('Wystąpił błąd:', error);

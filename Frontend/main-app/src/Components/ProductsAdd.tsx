@@ -108,7 +108,7 @@ const ProductsAdd = () => {
         const onClickDelete = (id) =>{
             deleteProduct(id);
             hiddenPopup();
-            navigate('/products');
+            window.location.href = '/products';
         }
 
 
