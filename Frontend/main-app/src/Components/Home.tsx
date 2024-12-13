@@ -2,8 +2,12 @@ import '../styles/Home.css';
 
 
 
+
 const HomePage = () => {
+
+
     return(
+
         <div className='home_div'>
 
 

@@ -4,7 +4,7 @@ const connectDB = require("./dbConnection");
 async function getProducts (req, res)  {
         try {
             const db = await connectDB();
-            let products = await db.collection('products').find({}).toArray();
+            const products = await db.collection('products').find({}).toArray();
             res.status(200).json(products);
 
         } catch (err) {

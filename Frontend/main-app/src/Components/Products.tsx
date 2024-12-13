@@ -36,12 +36,13 @@ import '../styles/Products.css';
 
 
 
-            const showCart = async (ID) => {
+            const showCartPopup = async (ID) => {
                 try {
-                    const response = await fetch(`http://localhost:3000/PopupProduct/${ID}`);
+                    const response = await fetch(`http://localhost:3000/PopupProduct/${ID}`,{credentials: 'include'});
 
                     if (!response.ok) {
-                        console.log('error');
+                        window.location.replace('/login');
+                        alert('You must be logged in');
                     }
 
                     const data = await response.json();
@@ -61,7 +62,7 @@ import '../styles/Products.css';
         };
 
         const showPopup= async (ID) =>{
-            const productData = await showCart(ID);
+            const productData = await showCartPopup(ID);
 
             if (productData) {
                 setProductID(productData._id);
@@ -86,12 +87,14 @@ import '../styles/Products.css';
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        credentials: 'include',
                         body: JSON.stringify({productID, quantity}),
                     });
 
                     if (response.ok) {
                         console.log('Produkt został wysłany!');
-                        setHidden(true);
+                        setQuantity('0');
+                        setHidden(false);
                     } else {
                         console.log('Błąd podczas wysyłania produktu');
                     }
