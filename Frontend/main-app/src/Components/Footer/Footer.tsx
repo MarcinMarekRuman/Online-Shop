@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import '../../styles/Footer.css'
-import {Contact} from './footer.interface';
+import '../../styles/Footer.css';
+import {FooterData} from './footer.interface';
 
 
 const Footer = () => {
-    const [footerData, setFooterData] = useState<Contact | null>(null);
+    const [footerData, setFooterData] = useState<FooterData | null>(null);
 
     useEffect(() => {
         const fetchFooterContact = async () =>{
@@ -22,6 +22,8 @@ const Footer = () => {
         }
         fetchFooterContact();
     }, []);
+
+
     if (!footerData) return null;
 
 
@@ -45,8 +47,8 @@ const Footer = () => {
 
             </div>
         </footer>
-    )
-}
+    );
+};
 
 
 export default Footer;

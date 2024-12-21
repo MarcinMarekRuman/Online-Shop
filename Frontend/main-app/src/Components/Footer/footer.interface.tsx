@@ -1,5 +1,7 @@
-export interface Contact {
-    contactTitle: string;
-    phone: number;
-    location: string;
+export interface FooterData {
+    contact: {
+        title: string;
+        phone: string;
+        location: string;
+    }
 }

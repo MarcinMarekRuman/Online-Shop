@@ -2,18 +2,23 @@ import '../styles/ProductsAdd.css';
 import {useEffect, useState} from 'react';
 import {FiEdit} from "react-icons/fi";
 import {RiDeleteBin6Line} from "react-icons/ri";
-import {useNavigate} from "react-router-dom";
 
 const ProductsAdd = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [imageURL, setImageURL] = useState('');
+    const [editName, setEditName] = useState('');
+    const [editPrice, setEditPrice] = useState('');
+    const [editDescription, setEditDescription] = useState('');
+    const [editImageURL, setEditImageURL] = useState('');
     const [products, setProducts] = useState([]);
     const [hidden, setHidden] = useState(false);
+    const [hiddenEdit, setHiddenEdit] = useState(false);
     const [prodId, setProdId] = useState(null);
+    const [prodIdEdit, setProdIdEdit] = useState(null);
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
 
-    const navigate = useNavigate();
 
 
 
@@ -52,13 +57,44 @@ const ProductsAdd = () => {
 
         const hiddenPopup = () => {
             setHidden(false);
+            setIsPopupVisible(false);
+        };
+
+        const hiddenEditPopup = () => {
+            setHiddenEdit(false);
+            setIsPopupVisible(false);
         };
 
         const showPopup = (id) => {
-            setHidden(true);
-            setProdId(id);
+        setHidden(true);
+        setIsPopupVisible(true);
+        setProdId(id);
+        console.log(id);
+        };
+
+        const showEditPopup = (id, name, desctiption, price, imageURL) => {
+            setHiddenEdit(true);
+            setIsPopupVisible(true);
+            setProdIdEdit(id);
+            setEditName(name)
+            setEditDescription(desctiption)
+            setEditPrice(price)
+            setEditImageURL(imageURL)
             console.log(id);
         };
+
+    useEffect(() => {
+        if (isPopupVisible) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isPopupVisible]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -104,20 +140,47 @@ const ProductsAdd = () => {
             }
         };
 
+    const editProduct = async (ID) => {
+        try {
+            const response = await fetch(`http://localhost:3000/editProduct/${ID}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ editName, editPrice, editDescription, editImageURL })
+            });
+
+            if (response.ok) {
+                console.log(`Product with ID ${ID} has been edited!`);
+            } else {
+                console.log('Błąd podczas edycji produktu');
+            }
+        } catch (error) {
+            console.error('Wystąpił błąd:', error);
+        }
+    };
+
 
         const onClickDelete = (id) =>{
             deleteProduct(id);
             hiddenPopup();
-            window.location.href = '/products';
+            window.location.href = '/ProductsAdd';
         }
 
+        const onClickEdit = (id) => {
+            editProduct(id);
+            hiddenEditPopup();
+            window.location.href = '/ProductsAdd';
+        }
 
-        return (
+    return (
         <div className="productsAdd-container">
             <div className="AddForm-box">
+                <p className='addProductTitle'>Add Product</p>
                 <form onSubmit={handleSubmit} className="edit-form">
                     <div className="Change-Div">
-                        <label className="edit-label">Nazwa</label>
+                        <label className="edit-label">Name</label>
                         <input
                             type="text"
                             value={name}
@@ -128,7 +191,7 @@ const ProductsAdd = () => {
                     </div>
 
                     <div className="Change-Div">
-                        <label className="edit-label">Opis</label>
+                        <label className="edit-label">Description</label>
                         <input
                             type="text"
                             value={description}
@@ -139,7 +202,7 @@ const ProductsAdd = () => {
                     </div>
 
                     <div className="Change-Div">
-                        <label className="edit-label">Cena</label>
+                        <label className="edit-label">Price</label>
                         <input
                             type="number"
                             value={price}
@@ -150,7 +213,7 @@ const ProductsAdd = () => {
                     </div>
 
                     <div className="Change-Div">
-                        <label className="edit-label">Dodaj plik ze zdjęciem</label>
+                        <label className="edit-label">Add file with photo of product</label>
                         <input
                             type="string"
                             value={imageURL}
@@ -168,7 +231,7 @@ const ProductsAdd = () => {
 
             <div className="listProductsToEdit">
                 <div className="products-containerAdmin">
-                    <h3 className='products-text'>Zapoznaj się z naszą ofertą</h3>
+                    <h3 className='products-text'>Products</h3>
 
                     <div className="products-boxAdmin">
                         {products.map((product) => (
@@ -179,8 +242,13 @@ const ProductsAdd = () => {
                                 <p>{product.description}</p>
                                 <h3>Price: ${product.price}</h3>
                                 <div className='product-buttons'>
-                                    <a href='/ProductsAdd' className='product-button'> <FiEdit/></a>
-                                    <button className='product-button' onClick={() => showPopup(product._id)}>
+                                    <button className='product-button edit' onClick={() => showEditPopup(
+                                        product._id,
+                                        product.name,
+                                        product.description,
+                                        product.price,
+                                        product.imageURL)}> <FiEdit/></button>
+                                    <button className='product-button delete' onClick={() => showPopup(product._id)}>
                                         <RiDeleteBin6Line/></button>
                                 </div>
                             </div>
@@ -209,11 +277,79 @@ const ProductsAdd = () => {
                         </div>
                     )}
 
+                    {hiddenEdit && (<div className="editPopup">
+
+                        <div className="EditForm-box">
+                            <form onSubmit={handleSubmit} className="edit-form">
+                                <p className="editPara">
+                                    Edit Product: {prodIdEdit}
+                                </p>
+                                <div className="Change-Div">
+                                    <label className="edit-label">Name</label>
+                                    <input
+                                        type="text"
+                                        value={editName}
+                                        placeholder={editName}
+                                        onChange={(e) => setEditName(e.target.value)}
+                                        required
+                                        className="edit-input"
+                                    />
+                                </div>
+
+                                <div className="Change-Div">
+                                    <label className="edit-label">Description</label>
+                                    <input
+                                        type="text"
+                                        value={editDescription}
+                                        placeholder={editDescription}
+                                        onChange={(e) => setEditDescription(e.target.value)}
+                                        required
+                                        className="edit-input"
+                                    />
+                                </div>
+
+                                <div className="Change-Div">
+                                    <label className="edit-label">Price</label>
+                                    <input
+                                        type="number"
+                                        value={editPrice}
+                                        placeholder={editPrice}
+                                        onChange={(e) => setEditPrice(e.target.value)}
+                                        required
+                                        className="edit-input"
+                                    />
+                                </div>
+
+                                <div className="Change-Div">
+                                    <label className="edit-label">Add file with photo of product</label>
+                                    <input
+                                        type="string"
+                                        value={editImageURL}
+                                        placeholder={editImageURL}
+                                        onChange={(e) => setEditImageURL(e.target.value)}
+                                        required
+                                        className="edit-input"
+                                    />
+                                </div>
+                            </form>
+                        </div>
+                            <div className="editButtons">
+                            <button className="editConfirm editButton"
+                                            onClick={() => onClickEdit(prodIdEdit)}> Edit
+                                    </button>
+                                    <button onClick={hiddenEditPopup}
+                                            className="editCancel editButton"> Cancel
+                                    </button>
+
+                                </div>
+
+                        </div>
+                    )}
+
                 </div>
             </div>
 
         </div>
-    );
-};
+    )};
 
-export default ProductsAdd;
+        export default ProductsAdd

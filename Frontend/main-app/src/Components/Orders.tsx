@@ -38,10 +38,10 @@ const Orders = () =>{
             <div className='Orders-List'>
                 {orders.map((ord) => (
 
-                    <div key={ord.id} className="product-card">
-                        <p>OrderID: {ord._id}</p>
-                        <p>UserID: {ord.userID}</p>
-                        <p>Item Quantity: {ord.order.length}</p>
+                    <div key={ord.id} className="orders-card">
+                        <p className='orderID'>OrderID: {ord._id}</p>
+                        <p className='userID'>UserID: {ord.userID}</p>
+                        <p className='itemQuantity'>Item Quantity: {ord.order.length}</p>
 
                     </div>
                 ))}
