@@ -9,17 +9,11 @@
       "href": "/products"
     },
     {
-      "label": "Orders",
-      "href": "/orders"
-    },
-    {
-      "label": "Cart",
-      "href": "/cart"
-    },
-    {
-      "label": "Login",
-      "href": "/login"
+      "label": "FAQ",
+      "href": "/faq"
     }
+
+
   ],
   "title": "Szelest-Shop"
 

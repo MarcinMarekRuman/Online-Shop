@@ -57,7 +57,6 @@ const OrderCreate = () =>{
                 if (!response.ok) {
                     console.log('No response');
                 }
-                const data = await response.json();
 
                 window.location.replace('/cart');
             } catch (error) {

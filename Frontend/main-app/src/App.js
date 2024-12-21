@@ -11,6 +11,7 @@ import Admin from './Components/Admin.tsx'
 import Footer from './Components/Footer/Footer.tsx'
 import Cart from './Components/Cart.tsx'
 import ProductsAdd from './Components/ProductsAdd.tsx'
+import FAQ from './Components/FAQ.tsx'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {useEffect, useState} from "react";
 
@@ -31,12 +32,16 @@ function App() {
                 setRes(await response.json());
         };
         AdminCheck();
-    })
+    },[])
+
+
     if(!res || res)
+
+
 
   return (
     <Router>
-        <div>
+        <div className="App">
             <Header/>
             <Routes>
                 <Route path="/" element={<Home/>} />
@@ -49,6 +54,7 @@ function App() {
                 <Route path="/ProductsAdd" element={<ProductsAdd/>} />
                 <Route path="/UserOrders" element={<UserOrders/>} />
                 <Route path="/OrderCreate" element={<OrderCreate/>} />
+                <Route path="/faq" element={<FAQ/>} />
             </Routes>
 
 

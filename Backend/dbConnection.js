@@ -15,14 +15,12 @@ async function connectDB(){
 
     try{
          await client.connect();
-        console.log('DB Connected')
 
         dbConnection = client.db(dbName);
         return dbConnection;
 
     }
     catch (err){
-        console.error(err);
         throw err;
     }
 

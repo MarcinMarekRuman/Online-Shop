@@ -81,6 +81,8 @@ import '../styles/Products.css';
             console.log("productID:", productID);
             console.log("quantity:", quantity);
 
+            if(quantity !== '0')
+
             try {
                     const response = await fetch('http://localhost:3000/cart/add', {
                         method: 'POST',
@@ -119,23 +121,23 @@ import '../styles/Products.css';
                             <h2>{product.name}</h2>
                             <p>{product.description}</p>
                             <h3>Price: ${product.price}</h3>
-                            <button className='product-button' onClick={() => showPopup(product._id)}>
-                               CLICK </button>
+                            <button className='addCartButton' onClick={() => showPopup(product._id)}>
+                               ADD TO CART </button>
                         </div>
                     ))}
 
                 </div>
                 {hidden && (<div className="addToCartPopup">
 
-                    <form>
+                    <form className='addToCartForm'>
                         <div className="productTile">
                             <img src={popupProduct.imageURL} alt={popupProduct.name}/>
                             <h2>{popupProduct.name}</h2>
                             <h2>Price: ${popupProduct.price}</h2>
                         </div>
                         <input type='hidden' value={productID}/>
-                        <label>Quantity</label>
-                        <input type='number' value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
+                        <label className='addLabel'>Enter Quantity</label>
+                        <input className='addInput' type='number' value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
                         <div className="addButtons">
                             <button className="addCartButton" onClick={addToCart}>
                              Confirm

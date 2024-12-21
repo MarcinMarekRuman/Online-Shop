@@ -59,9 +59,6 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        console.log('reqPassword:', password);
-        console.log('dataBasePassword:', user.password);
-
         try {
             const isMatch = await bcrypt.compare(password, user.password);
 
@@ -95,7 +92,6 @@ app.post('/login', async (req, res) => {
 
 const authenticateUser = (req, res, next) => { //to idzie do pliku auth
     const token = req.cookies.token;
-    console.log("Token from cookies:", token);
 
     if (!token) {
         return res.status(401).json({ message: 'Access Denied: No token provided' });
@@ -103,7 +99,6 @@ const authenticateUser = (req, res, next) => { //to idzie do pliku auth
 
     try {
         const decoded = jwt.verify(token, 'mySecretJWTKey');
-        console.log(decoded);
         req.user = decoded;
         next();
     } catch (err) {
@@ -124,31 +119,28 @@ app.post('/logout', (req, res) => {
 });
 
 
-app.get('/orders', authenticateUser, async (req, res) => {
-    const userID = req.user.userId
-    console.log('UserID:', userID)
+app.get('/orders', authenticateUser, async (req, res, next) => {
     const db = await connectDB();
 
     try {
         const orders = await db.collection('orders').find({}).toArray();
-        console.log(orders);
 
         res.status(200).json(orders);
     }
     catch (err){
         res.status(500).json({ message: 'You are not logged in!' });
+        next();
     }
 });
 
 
 app.get('/cart', authenticateUser, async (req, res) => {
     const userID = req.user.userId
-    console.log('UserID:', userID)
     const db = await connectDB();
 
     try {
         const user = await db.collection('users').findOne({_id: new ObjectId(userID)});
-        console.log(user);
+
         const userCart = await user.cart.items;
 
         const cartItems = [];
@@ -166,7 +158,6 @@ app.get('/cart', authenticateUser, async (req, res) => {
             }
         }
 
-        console.log('CartItems' , cartItems);
 
         if (!user || !user.cart) {
             return res.status(404).json({ message: 'Your cart is empty!' });
@@ -195,7 +186,7 @@ app.get('/OrderCreate', authenticateUser, async (req, res) => {
 
     try {
         const user = await db.collection('users').findOne({_id: new ObjectId(userID)});
-        console.log(user);
+
         const userCart = await user.cart.items;
 
         const cartItems = [];
@@ -213,7 +204,6 @@ app.get('/OrderCreate', authenticateUser, async (req, res) => {
             }
         }
 
-        console.log('CartItems' , cartItems);
 
         if (!user || !user.cart) {
             return res.status(404).json({ message: 'Your cart is empty!' });
@@ -246,9 +236,6 @@ app.post('/OrderSend', authenticateUser, async (req, res, next) => {
     const db = await connectDB();
     try {
         const user = await db.collection('users').findOne({ _id: new ObjectId(userID) });
-        // const product = await db.collection('products').findOne({ _id: new ObjectId(productID) });
-
-
 
 
         if (!user) {
@@ -297,16 +284,10 @@ app.post('/cart/add', authenticateUser, async (req, res, next) => {
         const quantityToAdd = parseInt(quantity, 10);
         const userID = req.user.userId
 
-        console.log(productID);
-        console.log(quantity);
-        console.log(userID)
         const db = await connectDB();
         try {
             const user = await db.collection('users').findOne({ _id: new ObjectId(userID) });
             const product = await db.collection('products').findOne({ _id: new ObjectId(productID) });
-
-            console.log(product);
-            console.log(user);
 
             if (!product) {
                 return res.status(404).json({ message: 'Product not found' });
@@ -326,7 +307,7 @@ app.post('/cart/add', authenticateUser, async (req, res, next) => {
                 user.cart.items.push({ productId: new ObjectId(productID), quantity });
             }
 
-            await db.collection('users').updateOne(
+            await db.collection('user').updateOne(
                 { _id: new ObjectId(userID) },
                 { $set: { cart: user.cart } }
             );
@@ -340,9 +321,6 @@ app.post('/cart/add', authenticateUser, async (req, res, next) => {
 app.delete('/cartDelete/:id', authenticateUser, async (req, res) => {
     const { id } = req.params;
     const userID = req.user.userId
-
-    console.log(id);
-    console.log(userID);
 
     try {
         const db = await connectDB();
@@ -399,14 +377,11 @@ app.post('/SignData', async (req, res) => {
         const existingUser = await db.collection('users').findOne({email});
 
         if (existingUser) {
-            console.log('User already exists');
             return res.status(400).json({message: 'User already exists'});
         }
 
         const result = await signUp(email, username, password);
 
-
-        console.log("Result Data", { email, username, password });
         res.status(201).json({ message: 'User registered', userId: result.insertedId });
     } catch (err) {
         console.error("Błąd:", err);
@@ -445,7 +420,6 @@ app.post('/adminAccount', async (req, res) => {
 
         res.status(201).json({ message: 'Admin account checked'});
     } catch (err) {
-        console.error("Błąd:", err);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -455,7 +429,6 @@ app.post('/userCheck', authenticateUser ,async(req, res) => {
     const db = await connectDB();
     const userID = req.user.userId;
 
-    console.log(userID);
 
     if (!userID) {
         return res.status(401).json({ userData: null});
@@ -481,25 +454,17 @@ app.post('/AddProduct', async (req, res) => {
     try {
         const { name,  description,price, imageURL } = req.body;
 
-        console.log("Response Data:", { name, price, description, imageURL });
-
-
-
         const result = await productsAdd(name, description, price, imageURL);
 
-        console.log(result);
 
         res.status(201).json();
     } catch (err) {
-        console.error("Error:", err);
         res.status(500).json({ error: 'Error while product adding' });
     }
 });
 
 app.delete('/deleteProduct/:id', async (req, res) => {
     const { id } = req.params;
-
-    console.log(id);
 
     try {
         const db = await connectDB();
@@ -517,13 +482,11 @@ app.delete('/deleteProduct/:id', async (req, res) => {
 app.get('/PopupProduct/:id', authenticateUser, async (req, res) => {
     const { id } = req.params;
 
-    console.log(id);
 
     try {
         const db = await connectDB();
 
         const product = await db.collection('products').findOne({ _id: new ObjectId(id) });
-        console.log(product);
 
         if (product) {
             res.status(200).json(product);
@@ -533,6 +496,110 @@ app.get('/PopupProduct/:id', authenticateUser, async (req, res) => {
     }
 });
 
+app.delete('/deleteProduct/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const db = await connectDB();
+
+        const result = await db.collection('products').deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 1) {
+            res.status(200).json({ message: 'Product has been deleted' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
+
+app.post('/editProduct/:id', authenticateUser, async (req, res,next) => {
+    const { id } = req.params;
+    let { editName,  editDescription, editPrice, editImageURL } = req.body;
+
+    if(!editName) {
+        try{
+            const db = await connectDB();
+            const  noEdited = await db.collection('products').findOne({ _id: new ObjectId(id) });
+
+            if(noEdited) {
+                editName = noEdited.name;
+                editDescription = noEdited.description;
+                editPrice = noEdited.price;
+                editImageURL = noEdited.imageURL;
+            }
+        }
+        catch (err){
+            next;
+        }
+    }
+
+    if(!editDescription) {
+        try{
+            const db = await connectDB();
+            const  noEdited = await db.collection('products').findOne({ _id: new ObjectId(id) });
+
+            if(noEdited) {
+                editDescription = noEdited.description;
+            }
+        }
+        catch (err){
+            next;
+        }
+    }
+    if(!editPrice) {
+        try{
+            const db = await connectDB();
+            const  noEdited = await db.collection('products').findOne({ _id: new ObjectId(id) });
+
+            if(noEdited) {
+                editPrice = noEdited.price;
+            }
+        }
+        catch (err){
+            next;
+        }
+    }
+
+    if(!editImageURL) {
+        try{
+            const db = await connectDB();
+            const  noEdited = await db.collection('products').findOne({ _id: new ObjectId(id) });
+
+            if(noEdited) {
+                editImageURL = noEdited.imageURL;
+            }
+        }
+        catch (err){
+            next;
+        }
+    }
+
+
+    try {
+        const db = await connectDB();
+
+        const updateData = {};
+        if (editName) updateData.name = editName;
+        if (editDescription) updateData.description = editDescription;
+        if (editPrice) updateData.price = editPrice;
+        if (editImageURL) updateData.imageURL = editImageURL;
+
+
+        const editedProduct = await db.collection('products').updateOne(
+            { _id: new ObjectId(id) },
+            { $set:updateData },
+        );
+
+
+
+
+        if (editedProduct.modifiedCount > 0) {
+            res.status(200).json({message: 'Product has been updated' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
 
 
 

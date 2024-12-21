@@ -3,8 +3,8 @@ footer{
     height: auto;
     text-align: center;
     align-content: center;
-    color: #a8e62e;
-    background-color: #383737;
+    color: #000000;
+    background-color: #f3fdfb;
     font-size: 	1rem;
     border-top: 5px solid black;
 }
@@ -17,4 +17,11 @@ footer{
 
 .copyRight{
     align-self: center;
+    font-weight: bold;
+    font-size: 0.7rem;
+}
+
+.footerContact{
+    font-weight: bold;
+    font-size: 0.7rem;
 }
