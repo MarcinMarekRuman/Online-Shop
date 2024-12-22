@@ -201,7 +201,7 @@
 
 .deletePopup{
     display: flex;
-    position: absolute;
+    position: fixed;
     top: 25vh;
     height: 50vh;
     width: 50vw;
