@@ -1,15 +1,26 @@
 const express = require('express')
 const path = require('path');
 const cors = require('cors');
-const getProducts = require('./producsGet');
-const connectDB = require("./dbConnection");
-const productsAdd = require("./productsAdd");
-const signUp = require("./signUp");
-const auth = require("./auth");
+const adminAccount = require('./adminAccount.js');
+const userCheck = require('./userCheck.js');
+const login = require('./login.js');
+const logout = require('./logout.js');
+const signData = require('./signData.js');
+const getProducts = require('./producsGet.js');
+const quantityChange = require('./quantityChange.js');
+const orders = require('./orders.js');
+const orderCreate = require('./orderCreate.js');
+const orderSend = require('./orderSend.js');
+const cart = require('./cart.js');
+const cartAdd = require('./cartAdd.js');
+const cartDelete = require('./cartDelete.js');
+const editProduct = require('./editProduct.js');
+const productsAdd = require("./productsAdd.js");
+const productDelete = require("./productDelete.js");
+const popupProduct = require('./popupProduct.js');
 const session = require("express-session");
+const authenticateUser = require("./authenticateUser.js");
 const MongoSession = require('connect-mongodb-session')(session);
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const { ObjectId } = require('mongodb');
 const cookieParser =  require('cookie-parser');
 
@@ -46,582 +57,52 @@ app.use((req, res, next) => {
     next();
 });
 
-
-app.post('/login', async (req, res) => {
-
-
-    const { email, password } = req.body;
-    const db = await connectDB();
-    try {
-
-        const user = await db.collection('users').findOne({ email });
-        if (!user) {
-            return res.status(401).json({ message: 'Invalid email or password' });
-        }
-
-        try {
-            const isMatch = await bcrypt.compare(password, user.password);
-
-            if (!isMatch) {
-                return res.status(401).json({ message: 'Invalid email or password' });
-            }
-
-            const token = jwt.sign(
-                { userId: user._id, email: user.email },
-                'mySecretJWTKey',
-                { expiresIn: '1h' }
-            );
-            req.session.user = user;
-
-            res.cookie('token', token, {
-                httpOnly: true,
-                secure: false,
-                maxAge: 3600000,
-                sameSite: 'strict',
-                loggedIn: true
-            });
-
-            return res.json({ token, userId: user._id });
-        } catch (bcryptError) {
-            return res.status(500).json({ message: 'Password comparison failed' });
-        }
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-
-const authenticateUser = (req, res, next) => { //to idzie do pliku auth
-    const token = req.cookies.token;
-
-    if (!token) {
-        return res.status(401).json({ message: 'Access Denied: No token provided' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, 'mySecretJWTKey');
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.status(403).json({ message: 'Invalid or expired token' });
-    }
-};
-
-
-
-app.post('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            return res.status(500).json({ message: 'Logout failed' });
-        }
-        res.clearCookie('token');
-        return res.json({ message: 'Logged out successfully' });
-    });
-});
-
-
-app.get('/orders', authenticateUser, async (req, res, next) => {
-    const db = await connectDB();
-
-    try {
-        const orders = await db.collection('orders').find({}).toArray();
-
-        res.status(200).json(orders);
-    }
-    catch (err){
-        res.status(500).json({ message: 'You are not logged in!' });
-        next();
-    }
-});
-
-
-app.get('/cart', authenticateUser, async (req, res) => {
-    const userID = req.user.userId
-    const db = await connectDB();
-
-    try {
-        const user = await db.collection('users').findOne({_id: new ObjectId(userID)});
-
-        const userCart = await user.cart.items;
-
-        const cartItems = [];
-
-
-        for (const item of user.cart.items) {
-            const product = await db.collection('products').findOne({ _id: new ObjectId(item.productId) });
-
-            if (product) {
-
-                cartItems.push({
-                    ...product,
-                    quantity: item.quantity
-                });
-            }
-        }
-
-
-        if (!user || !user.cart) {
-            return res.status(404).json({ message: 'Your cart is empty!' });
-        }
-
-        console.log('UserCart:  ',userCart);
-        if (!userCart) {
-            res.status(401).json({ message: 'User not found' });
-        }
-
-        if(cartItems === null || cartItems === undefined) {
-            res.status(200).json({ message: 'Your Cart is empty!' });
-        }
-
-        res.status(200).json(cartItems);
-    }
-    catch (err){
-        res.status(500).json({ message: 'You are not logged in!' });
-    }
-});
-
-app.get('/OrderCreate', authenticateUser, async (req, res) => {
-    const userID = req.user.userId
-    console.log('UserID:', userID)
-    const db = await connectDB();
-
-    try {
-        const user = await db.collection('users').findOne({_id: new ObjectId(userID)});
-
-        const userCart = await user.cart.items;
-
-        const cartItems = [];
-
-
-        for (const item of user.cart.items) {
-            const product = await db.collection('products').findOne({ _id: new ObjectId(item.productId) });
-
-            if (product) {
-
-                cartItems.push({
-                    ...product,
-                    quantity: item.quantity
-                });
-            }
-        }
-
-
-        if (!user || !user.cart) {
-            return res.status(404).json({ message: 'Your cart is empty!' });
-        }
-
-        console.log('UserCart:  ',userCart);
-        if (!userCart) {
-            res.status(401).json({ message: 'User not found' });
-        }
-
-        if(cartItems === null || cartItems === undefined) {
-            res.status(200).json({ message: 'Your Cart is empty!' });
-        }
-
-        res.status(200).json(cartItems);
-    }
-    catch (err){
-        res.status(500).json({ message: 'You are not logged in!' });
-    }
-});
-
-
-
-app.post('/OrderSend', authenticateUser, async (req, res, next) => {
-
-    const userID = req.user.userId;
-
-    const temporaryOrder = [];
-
-    const db = await connectDB();
-    try {
-        const user = await db.collection('users').findOne({ _id: new ObjectId(userID) });
-
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        if (!user.orders) {
-            user.orders = { items: [] };
-        }
-
-        if(user.cart.items !== []){
-            for (const item of user.cart.items) {
-                temporaryOrder.push(item);
-            }
-
-            console.log(temporaryOrder);
-            await db.collection('users').updateOne(
-                { _id: new ObjectId(userID) },
-                { $push: {
-                        'orders.items': temporaryOrder } }
-            );
-
-            await db.collection('orders').insertOne(
-                {
-                    userID: user._id,
-                    order: temporaryOrder
-                }
-            );
-
-            await db.collection('users').updateOne(
-                { _id: new ObjectId(userID) },
-                { $set: {'cart.items': [] } }
-            );
-
-        }
-
-
-        res.json({ message: 'Product added to cart', cart: user.cart });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-
-app.post('/cart/add', authenticateUser, async (req, res, next) => {
-        const { productID, quantity } = req.body;
-
-        const quantityToAdd = parseInt(quantity, 10);
-        const userID = req.user.userId
-
-        const db = await connectDB();
-        try {
-            const user = await db.collection('users').findOne({ _id: new ObjectId(userID) });
-            const product = await db.collection('products').findOne({ _id: new ObjectId(productID) });
-
-            if (!product) {
-                return res.status(404).json({ message: 'Product not found' });
-            }
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
-            }
-            if (!user.cart) {
-                user.cart = { items: [] };
-            }
-
-            const cartItemIndex = user.cart.items.findIndex(item => item.productId.toString() === productID.toString());
-
-            if (cartItemIndex >= 0) {
-                user.cart.items[cartItemIndex].quantity = parseInt(user.cart.items[cartItemIndex].quantity, 10) + quantityToAdd;
-            } else {
-                user.cart.items.push({ productId: new ObjectId(productID), quantity });
-            }
-
-            await db.collection('user').updateOne(
-                { _id: new ObjectId(userID) },
-                { $set: { cart: user.cart } }
-            );
-
-            res.json({ message: 'Product added to cart', cart: user.cart });
-        } catch (err) {
-            res.status(500).json({ message: 'Server error' });
-        }
-    });
-
-app.delete('/cartDelete/:id', authenticateUser, async (req, res) => {
-    const { id } = req.params;
-    const userID = req.user.userId
-
-    try {
-        const db = await connectDB();
-
-        const result = await db.collection('users').updateOne(
-            { _id: new ObjectId(userID) },
-            { $pull: { "cart.items": { productId: new ObjectId(id) } } }
-        );
-
-
-        if (result.modifiedCount === 1) {
-            res.status(200).json({ message: 'Product has been deleted from cart' });
-        }
-    } catch (err) {
-        res.status(500).json({ error: 'Server Error' });
-    }
-});
-
-app.post('/quantity', authenticateUser, async (req, res, next) => {
-    const { id, quantity } = req.body;
-    const userID = req.user.userId
-
-    try {
-        const db = await connectDB();
-
-        const result = await db.collection('users').updateOne(
-            { _id: new ObjectId(userID) },
-            {
-                $set: {
-                    "cart.items.$[elem].quantity": parseInt(quantity)
-                }
-            },
-            {
-                arrayFilters: [{ "elem.productId": new ObjectId(id) }]
-            }
-        );
-
-
-        if (result.modifiedCount === 1) {
-            res.status(200).json({ message: 'Product has been deleted from cart' });
-        }
-    } catch (err) {
-        res.status(500).json({ error: 'Server Error' });
-    }
-
-});
-
-
-app.post('/SignData', async (req, res) => {
-    const { email, username, password } = req.body;
-    const db = await connectDB();
-
-    try {
-        const existingUser = await db.collection('users').findOne({email});
-
-        if (existingUser) {
-            return res.status(400).json({message: 'User already exists'});
-        }
-
-        const result = await signUp(email, username, password);
-
-        res.status(201).json({ message: 'User registered', userId: result.insertedId });
-    } catch (err) {
-        console.error("Błąd:", err);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.post('/adminAccount', async (req, res) => {
-    const email = 'admin@admin';
-    const username = 'Admin';
-    const password = 'admin12';
-    const db = await connectDB();
-
-    try {
-        const checkAdminExists = await db.collection('users').findOne({email});
-
-        if (checkAdminExists) {
-            return res.status(201).json({message: 'Admin account checked'});
-        }
-        else{
-            const result = await signUp(email, username, password);
-
-
-            await db.collection('users').updateOne(
-                { _id: new ObjectId(checkAdminAdd._id) },
-                {
-                    $set: {
-                        "role": 'admin'
-                    }
-                }
-            );
-        }
-
-
-
-
-        res.status(201).json({ message: 'Admin account checked'});
-    } catch (err) {
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.post('/userCheck', authenticateUser ,async(req, res) => {
-
-    const db = await connectDB();
-    const userID = req.user.userId;
-
-
-    if (!userID) {
-        return res.status(401).json({ userData: null});
-    }
-
-    try {
-        const userData = await db.collection('users').findOne({ _id: new ObjectId(userID) });
-
-        if (!userData) {
-            return res.status(404).json({ userData: null});
-        }
-
-        res.status(200).json({ userData });
-    } catch (err) {
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-
-
-
-app.post('/AddProduct', async (req, res) => {
-    try {
-        const { name,  description,price, imageURL } = req.body;
-
-        const result = await productsAdd(name, description, price, imageURL);
-
-
-        res.status(201).json();
-    } catch (err) {
-        res.status(500).json({ error: 'Error while product adding' });
-    }
-});
-
-app.delete('/deleteProduct/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const db = await connectDB();
-
-        const result = await db.collection('products').deleteOne({ _id: new ObjectId(id) });
-
-        if (result.deletedCount === 1) {
-            res.status(200).json({ message: 'Product has been deleted' });
-        }
-    } catch (err) {
-        res.status(500).json({ error: 'Server Error' });
-    }
-});
-
-app.get('/PopupProduct/:id', authenticateUser, async (req, res) => {
-    const { id } = req.params;
-
-
-    try {
-        const db = await connectDB();
-
-        const product = await db.collection('products').findOne({ _id: new ObjectId(id) });
-
-        if (product) {
-            res.status(200).json(product);
-        }
-    } catch (err) {
-        res.status(500).json({ error: 'Server Error' });
-    }
-});
-
-app.delete('/deleteProduct/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const db = await connectDB();
-
-        const result = await db.collection('products').deleteOne({ _id: new ObjectId(id) });
-
-        if (result.deletedCount === 1) {
-            res.status(200).json({ message: 'Product has been deleted' });
-        }
-    } catch (err) {
-        res.status(500).json({ error: 'Server Error' });
-    }
-});
-
-app.post('/editProduct/:id', authenticateUser, async (req, res,next) => {
-    const { id } = req.params;
-    let { editName,  editDescription, editPrice, editImageURL } = req.body;
-
-    if(!editName) {
-        try{
-            const db = await connectDB();
-            const  noEdited = await db.collection('products').findOne({ _id: new ObjectId(id) });
-
-            if(noEdited) {
-                editName = noEdited.name;
-                editDescription = noEdited.description;
-                editPrice = noEdited.price;
-                editImageURL = noEdited.imageURL;
-            }
-        }
-        catch (err){
-            next;
-        }
-    }
-
-    if(!editDescription) {
-        try{
-            const db = await connectDB();
-            const  noEdited = await db.collection('products').findOne({ _id: new ObjectId(id) });
-
-            if(noEdited) {
-                editDescription = noEdited.description;
-            }
-        }
-        catch (err){
-            next;
-        }
-    }
-    if(!editPrice) {
-        try{
-            const db = await connectDB();
-            const  noEdited = await db.collection('products').findOne({ _id: new ObjectId(id) });
-
-            if(noEdited) {
-                editPrice = noEdited.price;
-            }
-        }
-        catch (err){
-            next;
-        }
-    }
-
-    if(!editImageURL) {
-        try{
-            const db = await connectDB();
-            const  noEdited = await db.collection('products').findOne({ _id: new ObjectId(id) });
-
-            if(noEdited) {
-                editImageURL = noEdited.imageURL;
-            }
-        }
-        catch (err){
-            next;
-        }
-    }
-
-
-    try {
-        const db = await connectDB();
-
-        const updateData = {};
-        if (editName) updateData.name = editName;
-        if (editDescription) updateData.description = editDescription;
-        if (editPrice) updateData.price = editPrice;
-        if (editImageURL) updateData.imageURL = editImageURL;
-
-
-        const editedProduct = await db.collection('products').updateOne(
-            { _id: new ObjectId(id) },
-            { $set:updateData },
-        );
-
-
-
-
-        if (editedProduct.modifiedCount > 0) {
-            res.status(200).json({message: 'Product has been updated' });
-        }
-    } catch (err) {
-        res.status(500).json({ error: 'Server Error' });
-    }
-});
-
-
-
-
 app.get('/products', getProducts);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+app.post('/login', login);
+app.post('/logout', logout);
+app.get('/orders', authenticateUser ,orders);
+app.get('/cart', authenticateUser, cart);
+app.get('/OrderCreate', authenticateUser, orderCreate);
+app.post('/OrderSend', authenticateUser, orderSend);
+app.post('/cart/add', authenticateUser, cartAdd);
+app.delete('/cartDelete/:id', authenticateUser, cartDelete);
+app.post('/quantity', authenticateUser, quantityChange);
+app.post('/SignData', signData);
+app.post('/adminAccount', adminAccount);
+app.post('/userCheck', authenticateUser, userCheck);
+app.post('/AddProduct', productsAdd);
+app.delete('/deleteProduct/:id', productDelete);
+app.get('/PopupProduct/:id', authenticateUser, popupProduct);
+app.post('/editProduct/:id', authenticateUser, editProduct);
 
 
 app.listen(3000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

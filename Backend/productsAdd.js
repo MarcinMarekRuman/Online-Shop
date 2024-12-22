@@ -1,10 +1,11 @@
 const connectDB = require("./dbConnection");
 
 
-async function addProduct(name, description, price, imageURL){
+async function addProduct(req , res){
+    const { name,  description,price, imageURL } = req.body;
     try{
         const db = await connectDB();
-        let products = await db.collection(
+        let product = await db.collection(
             'products').insertOne(
                 {name: name,
                       description: description,
@@ -14,9 +15,9 @@ async function addProduct(name, description, price, imageURL){
                 });
 
 
+        res.status(201).json({message: 'Product added to cart', product: product });
     }catch(err){
-        console.log(err);
-        throw err;
+        res.status(500).json({ error: 'Error while product adding' });
     }
 
 }
