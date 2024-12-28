@@ -1,50 +1,78 @@
 import '../styles/Home.css';
+import { useState, useEffect } from 'react';
 
 
+const carouselImages = [
+
+    '/Carousel_Photos/photo1.jpg',
+    '/Carousel_Photos/photo2.jpg',
+    '/Carousel_Photos/photo3.jpg',
+    '/Carousel_Photos/photo4.jpeg',
+    '/Carousel_Photos/photo5.jpg'
+
+];
 
 
 const HomePage = () => {
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const nextSlide = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
+    };
+
+    const prevSlide = () => {
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + carouselImages.length) % carouselImages.length);
+    };
+
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            nextSlide();
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+
+
+
 
 
     return(
 
         <div className='home_div'>
 
-
-            <div className='homeBackgroundPhoto1'>
-                <div className='invite_div'>
-                    <h1>Check Ours Products</h1>
-                </div>
-
-                <div className='homeBackgroundPhoto2'>
-                    <p>
-                        Witamy w naszym sklepie, gdzie sportowy styl spotyka się z najwyższą jakością! Specjalizujemy
-                        się w
-                        sprzedaży oryginalnych butów renomowanych marek, takich jak Nike i Adidas.<br/><br/>
-                        Nasza oferta obejmuje zarówno klasyczne modele, jak i najnowsze kolekcje, które zdobywają serca
-                        miłośników mody i sportu na całym świecie.
-
-                        Naszym celem jest zapewnienie każdemu klientowi komfortu, stylu i wyjątkowej jakości, jakiej
-                        oczekują od najlepszych marek w branży. Oferujemy szeroki wybór obuwia sportowego, casualowego
-                        oraz
-                        lifestyle’owego, które doskonale sprawdzi się zarówno podczas codziennych aktywności, jak i
-                        treningów.
-
-                        Niezależnie od tego, czy szukasz kultowych modeli, jak Nike Air Max, Adidas Yeezy, czy też
-                        preferujesz najnowsze trendy w modzie sportowej, u nas znajdziesz coś dla siebie. Każda para
-                        butów w
-                        naszej kolekcji to połączenie nowoczesnych technologii i niepowtarzalnego designu.
-
-                        Z pasją dbamy o to, by każdy miłośnik sportowego stylu mógł wyrazić siebie i czuć się komfortowo
-                        na
-                        każdym kroku. Zapraszamy do zapoznania się z naszą ofertą i odkrycia, dlaczego tysiące klientów
-                        wybierają właśnie nasz sklep
-                    </p>
-                </div>
-
-
+            <div className='carousel'>
+                <button className="prev" onClick={prevSlide}></button>
+                <img src={carouselImages[currentIndex]} alt={`Slide ${currentIndex + 1}`} className="carousel-image"/>
+                <button className="next" onClick={nextSlide}></button>
             </div>
 
+            <div className=' first'>
+                    <div className='fadeDiv1'>
+                        <div className='firstDescription'>
+                            <p>HAUISDHBUIASBDUIASDIOASDBASUDBIASD</p>
+                        </div>
+                        <div className='firstFadeBlock'>
+                            <div className='firstBlock'>
+                                <img src='/FadesPhotos/photo2.jpg' alt='FadePhoto' className="fadeImage1" />
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div className='second'>
+                <div className='fadeDiv2'>
+                    <div className='secondFadeBlock'>
+                        <div className='secondBlock'>
+                            <img src='/FadesPhotos/photo2.jpg' alt='FadePhoto' className="fadeImage2"/>
+                        </div>
+                    </div>
+                    <div className='secondDescription'>
+                        <p>HAUISDHBUIASBDUIASDIOASDBASUDBIASD</p>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
     )

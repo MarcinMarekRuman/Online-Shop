@@ -1,26 +1,30 @@
 .Orders-Container{
     display: flex;
     justify-self: center;
-    height: 77vh;
+    height: auto;
     width: 100%;
-    background-color: #f3fdfb;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
     justify-content: center;
     align-items: center;
 }
 
 .Orders-List{
+    display: flex;
+    justify-content: center;
     background-color: white;
     width: 100%;
-    max-width: 1540px;
+    gap: 1rem;
     height: auto;
     flex-wrap: wrap;
 }
 
 .orders-card{
+    padding: 2rem;
     display: flex;
+    width: 100%;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 60px
-
+    justify-content: space-evenly;
+    gap: 60px;
+    border: 1px solid black;
 }

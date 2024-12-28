@@ -26,12 +26,12 @@ header {
 .logo{
     max-width: 6vw;
     max-height:6vh;
-    cursor: pointer;
 }
 
 
 .logoDiv{
     text-align: center;
+    cursor: pointer;
 }
 
 ul {
