@@ -38,8 +38,25 @@
     background-color: white;
     gap: 1px;
     border-radius: 10px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.8);
 }
+
+
+.cardDescription{
+    color:white;
+}
+
+.cardPrice{
+    display: flex;
+    align-self: center;
+    border: 1px solid rgb(0, 46, 255);
+    box-shadow: 0 6px 12px rgb(113, 209, 253);
+    border-radius: 20px;
+    padding: 10px;
+    width: fit-content;
+}
+
+
 
 .product-image{
     width: auto;
@@ -92,6 +109,7 @@
     display: flex;
     background-color: white;
     border: 1px solid black;
+    box-shadow: 0 2px 12px rgb(0, 0, 0);
     border-radius: 30px;
     width: 60%;
     cursor: pointer;

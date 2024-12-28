@@ -118,9 +118,9 @@ import '../styles/Products.css';
 
                         <div key={product.id} className="product-card">
                             <img src={product.imageURL} alt={product.name} className="product-image"/>
-                            <h2>{product.name}</h2>
-                            <p>{product.description}</p>
-                            <h3>Price: ${product.price}</h3>
+                            <h2 className='cardName'>{product.name}</h2>
+                            <p className='cardDescription'>{product.description}</p>
+                            <h3 className='cardPrice'>Price: ${product.price}</h3>
                             <button className='addCartButton' onClick={() => showPopup(product._id)}>
                                ADD TO CART </button>
                         </div>

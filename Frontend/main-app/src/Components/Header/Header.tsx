@@ -70,7 +70,9 @@ const Header = () => {
 
     if (!headerData) return null;
 
-
+    const redirect = () =>{
+        window.location.replace('/');
+    }
 
     const logout = async (e) => {
         e.preventDefault();
@@ -100,7 +102,7 @@ const Header = () => {
     return (
         <div className='headerDiv'>
             <header>
-                <div className="logoDiv">
+                <div className="logoDiv" onClick={redirect}>
                     <img className="logo" src={LogoPhoto} alt="Logo"/>
                     <p className="headerTitle">
                         {headerData.title}
