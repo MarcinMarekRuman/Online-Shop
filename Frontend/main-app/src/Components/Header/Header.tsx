@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { HeaderContent, NavigationItem } from './header.interface';
 import '../../styles/Header.css'
+import { CgProfile } from "react-icons/cg";
 
 // @ts-ignore
 import LogoPhoto from '../../Media1/shopLogo.jpeg';
@@ -74,6 +75,11 @@ const Header = () => {
         window.location.replace('/');
     }
 
+    const toggleMenu = () => {
+        const roleDiv = document.querySelector('.roleDiv');
+        roleDiv.classList.toggle('active');
+    };
+
     const logout = async (e) => {
         e.preventDefault();
 
@@ -99,6 +105,11 @@ const Header = () => {
     };
 
     if(!userData || userData)
+
+
+
+
+
     return (
         <div className='headerDiv'>
             <header>
@@ -128,9 +139,17 @@ const Header = () => {
                     <a href='/Admin'> Admin Panel </a>
                 </div>)}
                 {role && (<div className='roleDiv'>
-                    <a href='/cart'>My Cart</a>
-                    <button className='logout' onClick={logout}>Logout</button>
-                </div>
+                        <div className='userProfile' onClick={toggleMenu}>
+                            <CgProfile/>
+                        </div>
+                        <div className='userProfileDiv'>
+                            <a className="profileOption" href='/cart'>Cart</a>
+                            <a className="profileOption" href='/userOrders'>Orders</a>
+                            <button className='logout' onClick={logout}>Logout</button>
+                        </div>
+                    </div>
+
+
                 )}
 
 

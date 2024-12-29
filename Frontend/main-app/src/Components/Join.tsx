@@ -45,7 +45,7 @@ const SignIn = () =>{
         <div className="register-container">
             <div className="register-box">
                 <h2>Register</h2>
-                <form onSubmit={dataSubimit}>
+                <form onSubmit={dataSubimit} className="registerForm">
                     <div className="input-group">
                         <label>Email</label>
                         <input

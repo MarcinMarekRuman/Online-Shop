@@ -26,6 +26,15 @@
     flex-wrap: wrap;
 
 }
+
+.descriptionsOfProduct{
+    display: flex;
+    height: 50%;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+}
+
 .product-card{
     display: flex;
     flex-direction: column;
@@ -41,6 +50,12 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.8);
 }
 
+.cardName{
+    display: flex;
+    justify-self: end;
+    align-items: center;
+    justify-content: center;
+}
 
 .cardDescription{
     color:white;
@@ -61,7 +76,7 @@
 .product-image{
     width: auto;
     min-width: 15vw;
-    height: 8vw;
+    height: 50%;
 }
 
 .addToCartPopup{
@@ -70,6 +85,7 @@
     top: 25vh;
     height: 50vh;
     width: 50vw;
+    max-width: 1400px;
     background-color: white;
     border: 3px solid black;
     border-radius: 30px;

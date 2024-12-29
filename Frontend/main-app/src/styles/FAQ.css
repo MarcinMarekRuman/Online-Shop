@@ -1,23 +1,33 @@
 
 .FAQ-Container {
+    display: flex;
     height: 100%;
     width: 100%;
     min-height: 75vh;
+    justify-content: center;
 }
 
-.faq-item {
+.FAQ-List{
+    display: flex;
+    padding-top: 1rem;
+    flex-direction: column;
+    height: 100%;
+    width: 80%;
+}
+
+.FAQ-item {
     margin-bottom: 10px;
     border-bottom: 1px solid #ccc;
 }
 
-.faq-question {
+.FAQ-question {
     padding: 15px;
     background-color: #f1f1f1;
     cursor: pointer;
     font-weight: bold;
 }
 
-.faq-answer {
+.FAQ-answer {
     max-height: 0;
     overflow: hidden;
     padding: 0 15px;
@@ -25,7 +35,7 @@
     transition: max-height 0.3s ease, padding 0.3s ease;
 }
 
-.faq-answer.open {
+.FAQ-answer.open {
     max-height: 200px;
     padding: 15px;
 }

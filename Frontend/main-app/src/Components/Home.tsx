@@ -1,4 +1,6 @@
 import '../styles/Home.css';
+import { AiFillCaretRight } from "react-icons/ai";
+import { AiFillCaretLeft } from "react-icons/ai";
 import { useState, useEffect } from 'react';
 
 
@@ -42,19 +44,22 @@ const HomePage = () => {
 
         <div className='home_div'>
 
-            <div className='carousel'>
-                <button className="prev" onClick={prevSlide}></button>
-                <img src={carouselImages[currentIndex]} alt={`Slide ${currentIndex + 1}`} className="carousel-image"/>
-                <button className="next" onClick={nextSlide}></button>
+            <div className='carouselDiv'>
+                <div className='carousel'>
+                    <button className="prev" onClick={prevSlide}><AiFillCaretLeft /></button>
+                    <img src={carouselImages[currentIndex]} alt={`Slide ${currentIndex + 1}`}
+                         className="carousel-image"/>
+                    <button className="next" onClick={nextSlide}> <AiFillCaretRight /></button>
+                </div>
             </div>
 
             <div className=' first'>
-                    <div className='fadeDiv1'>
-                        <div className='firstDescription'>
-                            <p>HAUISDHBUIASBDUIASDIOASDBASUDBIASD</p>
-                        </div>
-                        <div className='firstFadeBlock'>
-                            <div className='firstBlock'>
+                <div className='fadeDiv1'>
+                    <div className='firstDescription'>
+                        <p>HAUISDHBUIASBDUIASDIOASDBASUDBIASD</p>
+                    </div>
+                    <div className='firstFadeBlock'>
+                    <div className='firstBlock'>
                                 <img src='/FadesPhotos/photo2.jpg' alt='FadePhoto' className="fadeImage1" />
                             </div>
                         </div>

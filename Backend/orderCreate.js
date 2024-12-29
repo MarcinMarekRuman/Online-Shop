@@ -4,7 +4,6 @@ const {ObjectId} = require("mongodb");
 
 async function orderCreate(req, res){
     const userID = req.user.userId
-    console.log('UserID:', userID)
     const db = await connectDB();
 
     try {

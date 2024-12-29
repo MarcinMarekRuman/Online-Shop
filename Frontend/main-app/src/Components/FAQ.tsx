@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 const FAQ = () =>{
 
     const [FAQData, setFAQData] = useState([]);
-
+    const [activeIndex, setActiveIndex] = useState(null);
 
     useEffect(() => {
         const fetchHeaderContent = async () => {
@@ -22,7 +22,7 @@ const FAQ = () =>{
         fetchHeaderContent();
     }, []);
 
-    const [activeIndex, setActiveIndex] = useState(null);
+
 
     const toggleFAQ = (index) => {
         setActiveIndex(activeIndex === index ? null : index);
@@ -32,14 +32,14 @@ const FAQ = () =>{
         <div className='FAQ-Container'>
             <div className='FAQ-List'>
                 {FAQData.map((faq, index) => (
-                    <div key={index} className="faq-item">
+                    <div key={index} className="FAQ-item">
                         <div
-                            className="faq-question"
+                            className="FAQ-question"
                             onClick={() => toggleFAQ(index)}
                         >
                             {faq.question}
                         </div>
-                        <div className={`faq-answer ${activeIndex === index ? "open" : ""}`}>
+                        <div className={`FAQ-answer ${activeIndex === index ? "open" : ""}`}>
                             {faq.answer}
                         </div>
                     </div>
