@@ -58,7 +58,7 @@ const OrderCreate = () =>{
                     console.log('No response');
                 }
 
-                window.location.replace('/cart');
+                window.location.replace('/userOrders');
             } catch (error) {
                 console.error('Error fetching header content:', error);
             }
@@ -68,28 +68,26 @@ const OrderCreate = () =>{
 
     return(
         <div className='OrderCreate-Container'>
-            <div className='OrdersCreate-List'>
+            <div className='OrdersCreateList'>
                 {inOrderProducts.map((product) => (
 
                     <div key={product.id} className="orderCreateItem">
                         <img src={product.imageURL} alt={product.name} className="product-image"/>
                         <h4>{product.name}</h4>
                         <h4>Price: ${product.price}</h4>
-                        <button onClick={() => {
-                            sendOrder()
-                        }}>Delete
-                        </button>
+
                     </div>
                 ))}
-                <p>Total price: ${totalPrice}</p>
+                <p className="totalPriceOrder">Total price: ${totalPrice}</p>
                 <form className="AcceptForm" onSubmit={(e) => { e.preventDefault(); sendOrder(); }}>
-                    <label>If you are accepting summary, type word "Accept" below and press button Accept</label>
+                    <label className="acceptLabel">If you are accepting summary, type word "Accept" below and press button.</label>
                     <input
+                        className="acceptInput"
                         type='text'
                         value={acceptInput}
                         onChange={(e) => setAcceptInput(e.target.value)}
                     />
-                    <button type='submit'>Accept</button>
+                    <button className="AcceptButton" type='submit'>Accept</button>
                 </form>
             </div>
 

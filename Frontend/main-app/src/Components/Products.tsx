@@ -118,21 +118,24 @@ import '../styles/Products.css';
 
                         <div key={product.id} className="product-card">
                             <img src={product.imageURL} alt={product.name} className="product-image"/>
-                            <h2 className='cardName'>{product.name}</h2>
-                            <p className='cardDescription'>{product.description}</p>
-                            <h3 className='cardPrice'>Price: ${product.price}</h3>
-                            <button className='addCartButton' onClick={() => showPopup(product._id)}>
-                               ADD TO CART </button>
+                            <div className="descriptionsOfProduct">
+                                <h2 className='cardName'>{product.name}</h2>
+                                <p className='cardDescription'>{product.description}</p>
+                                <h3 className='cardPrice'>Price: ${product.price}</h3>
+                                <button className='addCartButton' onClick={() => showPopup(product._id)}>
+                                    ADD TO CART
+                                </button>
+                            </div>
                         </div>
                     ))}
 
                 </div>
                 {hidden && (<div className="addToCartPopup">
 
-                    <form className='addToCartForm'>
-                        <div className="productTile">
-                            <img src={popupProduct.imageURL} alt={popupProduct.name}/>
-                            <h2>{popupProduct.name}</h2>
+                        <form className='addToCartForm'>
+                            <div className="productTile">
+                                <img src={popupProduct.imageURL} alt={popupProduct.name}/>
+                                <h2>{popupProduct.name}</h2>
                             <h2>Price: ${popupProduct.price}</h2>
                         </div>
                         <input type='hidden' value={productID}/>

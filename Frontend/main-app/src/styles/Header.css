@@ -72,10 +72,11 @@ a:hover {
     font-weight: bold;
 }
 
-.roleDiv{
+
+.userProfileDiv{
     display: flex;
-    flex-direction: row;
-    gap: 10px;
+    flex-direction: column;
+    z-index: 1;
 }
 
 .logout{
@@ -94,4 +95,48 @@ a:hover {
     color: white;
     background-color: rgb(30, 30, 30);
     border-radius: 5px;
+}
+
+
+
+.roleDiv {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.userProfile{
+    display: flex;
+    font-size: 3rem;
+    cursor: pointer;
+}
+
+
+.userProfileDiv {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    z-index: -1;
+    padding: 10px;
+    border: 1px solid black;
+    transition: max-height 0.3s ease, z-index 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+    gap: 0.5rem;
+}
+
+.roleDiv.active .userProfileDiv {
+    display: flex;
+    max-height: 200px;
+    z-index: 1;
+    transition: max-height 0.3s ease, z-index 0.3s ease;
+}
+
+.profileOption{
+    border: 2px solid black;
 }

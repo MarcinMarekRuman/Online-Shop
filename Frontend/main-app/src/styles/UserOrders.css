@@ -1,4 +1,4 @@
-.Orders-Container{
+.userOrders-Container{
     display: flex;
     height: 77vh;
     width: auto;
@@ -7,7 +7,7 @@
     align-items: center;
 }
 
-.Orders-List{
+.userOrders-List{
     background-color: white;
     width: 80vw;
     height: 60vh;

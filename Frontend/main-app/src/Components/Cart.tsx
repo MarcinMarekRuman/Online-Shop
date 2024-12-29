@@ -1,4 +1,7 @@
 import {useEffect, useState} from 'react';
+import '../styles/Cart.css';
+import { FaTrashCan } from "react-icons/fa6";
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
 
 
 
@@ -41,7 +44,7 @@ const Cart = () =>{
 
 
 
-    if (!inCartProducts) return <div>Loadding...</div>;
+    if (!inCartProducts) return <div>Loading...</div>;
     if (!inCartProducts.length) return <div>Your cart is empty</div>;
     if(inCartProducts.message) return <div>You are not logged in!</div>;
 
@@ -101,34 +104,55 @@ const Cart = () =>{
 
         <div className="cartContainer">
 
-            {inCartProducts.map((product) => (
+            <div className="cartProductList">
+                {inCartProducts.map((product) => (
 
-                <div key={product.id} className="product-card">
-                    <img src={product.imageURL} alt={product.name} className="product-image"/>
-                    <h4>{product.name}</h4>
-                    <h4>Price: ${product.price}</h4>
-                    <form>
-                        <input type={"number"}
-                               min="0"
-                               max="20"
-                               placeholder={product.quantity}
-                               value={quantity}
-                               onChange={(e) => setQuantity(e.target.value)}
-                               className="quantityInput"
-                        />
-                        <button className={"quantityChangeBtn"}
-                        onClick={()=>{quantityChange(product._id, quantity)}}
-                        >Change quantity</button>
-                    </form>
+                    <div key={product.id} className="cartProduct">
+                        <img src={product.imageURL} alt={product.name} className="cartImage"/>
+                        <h4>{product.name}</h4>
+                        <h4>Price: ${product.price}</h4>
+                        <form className="quantityForm">
+                            <input type={"number"}
+                                   min="0"
+                                   max="20"
+                                   placeholder={product.quantity}
+                                   value={quantity}
+                                   onChange={(e) => setQuantity(e.target.value)}
+                                   className="quantityInput"
+                            />
+                            <button className="quantityChangeBtn"
+                                    onClick={()=>{quantityChange(product._id, quantity)}}
+                            >CHANGE</button>
+                        </form>
 
-                    <button onClick={()=>{cartDelete(product._id)}}>Delete</button>
+
+                            <button className="cartDeleteButton" onClick={() => {
+                                cartDelete(product._id)
+                            }}>
+                                <FaTrashCan/>
+                            </button>
+
+                    </div>
+
+                ))}
+            </div>
+
+            <div className="rightSide">
+                <div className="cartSummary">
+                    <p className="priceSummaryText">
+                        Final Cost
+                    </p>
+                    <div className="priceSummary">
+
+                        <p className='costSummarySymbol'>
+                            <RiMoneyDollarCircleLine/>
+                        </p>
+                        <p className='costSummaryPrice'>
+                            {finalPrice}
+                        </p>
+                    </div>
+                    <button className='orderButton' onClick={orderCreate}>ORDER</button>
                 </div>
-
-            ))}
-
-            <div className="cartSummary">
-                <p className='costSummary'>${finalPrice}</p>
-                <button className='orderButton' onClick={orderCreate}>Order</button>
             </div>
         </div>
 

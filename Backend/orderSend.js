@@ -24,7 +24,6 @@ async function orderSend(req,res) {
                 temporaryOrder.push(item);
             }
 
-            console.log(temporaryOrder);
             await db.collection('users').updateOne(
                 { _id: new ObjectId(userID) },
                 { $push: {
