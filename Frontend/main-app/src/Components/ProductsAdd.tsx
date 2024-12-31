@@ -239,7 +239,7 @@ const ProductsAdd = () => {
                             <div key={product.id} className="product-cardAdmin">
                                 <img src={product.imageURL} alt={product.name} className="product-image"/>
                                 <h2>{product.name}</h2>
-                                <p>{product.description}</p>
+                                <p className="descriptionsOfProduct">{product.description}</p>
                                 <h3>Price: ${product.price}</h3>
                                 <div className='product-buttons'>
                                     <button className='product-button edit' onClick={() => showEditPopup(

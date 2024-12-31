@@ -146,19 +146,14 @@
     justify-content: center;
     width: auto;
     height: auto ;
-    max-width: 10vw;
-    padding: 10px;
+    max-width: 12vw;
+    padding: 40px;
     background-color: white;
     gap: 1px;
     border-radius: 10px;
     box-shadow: 0 4px 12px #575757;
 }
 
-.product-image{
-    width: auto;
-    min-width: 15vw;
-    height: 8vw;
-}
 
 .product-buttons{
     min-height: 8%;
@@ -173,7 +168,6 @@
     text-transform: uppercase;
     font-weight: bold;
     border-radius: 15px;
-    cursor: pointer;
     transition: transform 1s ease;
 }
 
@@ -297,4 +291,8 @@
     flex-direction: column;
     align-content: center;
     justify-content: center;
+}
+
+.description{
+    font-size: 0.5rem;
 }

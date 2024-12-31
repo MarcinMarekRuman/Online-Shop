@@ -13,6 +13,14 @@ async function adminAccount(req, res) {
         const checkAdminExists = await db.collection('users').findOne({email});
 
         if (checkAdminExists) {
+            await db.collection('users').updateOne(
+                { _id: new ObjectId(checkAdminExists._id) },
+                {
+                    $set: {
+                        "role": 'admin'
+                    }
+                }
+            );
             return res.status(201).json({message: 'Admin account checked'});
         }
         else{
